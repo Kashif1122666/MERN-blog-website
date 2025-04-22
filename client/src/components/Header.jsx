@@ -65,7 +65,7 @@ function Header() {
           <FaMoon/>
         </Button >
         <Link>
-          <Button  >
+          <Button  outline >
             Sign in
           </Button>
         </Link>
