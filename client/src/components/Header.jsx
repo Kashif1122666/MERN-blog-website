@@ -64,7 +64,7 @@ function Header() {
         <Button className='w-12 h-10 hidden sm:inline  ' color='light' pill>
           <FaMoon/>
         </Button >
-        <Link>
+        <Link to='/sign-in'>
           <Button  outline >
             Sign in
           </Button>
