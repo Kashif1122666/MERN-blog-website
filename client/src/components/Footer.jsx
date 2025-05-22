@@ -3,9 +3,11 @@ import { Footer, FooterIcon } from 'flowbite-react';
 import { FooterCopyright, FooterLink, FooterLinkGroup, FooterTitle } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import {BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter}  from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 const FooterCom = () => {
+  const   {theme}  = useSelector(state => state.theme);
   return (
-    <Footer container className="border border-t-8 border-teal-500">
+    <Footer container className={`border border-t-8 border-teal-500  ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'}`}>
       <div className="w-full max-w-7xl mx-auto">
         <div className="grid w-full justify-between sm:flex md:grid-cols-1 ">
           <div className="mt-5">

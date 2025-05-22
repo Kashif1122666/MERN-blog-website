@@ -1,8 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
 
 function Dashboard() {
+      const   {theme}  = useSelector(state => state.theme);
   return (
-    <div>Dashboard</div>
+    <div className={`${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'}`}>Dashboard</div>
+    
   )
 }
 

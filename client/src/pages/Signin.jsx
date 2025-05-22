@@ -10,6 +10,7 @@ function SignIn() {
   const [formData , setFormData] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
+    const   {theme}  = useSelector(state => state.theme);
   const handleChange = (e) => {
            setFormData({...formData , [e.target.id]: e.target.value.trim()})}
          const {loading , error:errorMessage} = useSelector(state => state.user);
@@ -39,7 +40,7 @@ function SignIn() {
           }
   }
   return (
-    <div className='min-h-screen mt-20'>
+    <div className={`min-h-screen mt-20  ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'} `}>
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
           {/* left  */}
         <div className='flex-1'>

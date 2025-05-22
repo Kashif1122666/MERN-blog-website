@@ -1,19 +1,22 @@
 import React from 'react'
 import {Link , useLocation} from 'react-router-dom'
 import {AiOutlineSearch} from 'react-icons/ai'
-import {FaMoon} from 'react-icons/fa'
+import {FaMoon , FaSun} from 'react-icons/fa'
 import { Navbar, Button, TextInput, Dropdown, Avatar ,DropdownHeader, DropdownItem, DropdownDivider, } from 'flowbite-react';
 import { HiMenu } from 'react-icons/hi';
 import { useState } from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector , useDispatch} from 'react-redux';
+import { toggleTheme } from '../redux/theme/themeSlice';
 
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
   const  {currentUser} = useSelector(state => state.user);
+  const   {theme}  = useSelector(state => state.theme);
   return (
-    <Navbar className='border-b-2'>
+    <Navbar className={`border-b-2 ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'}`} >
       <Link to="/" className='self-center whitespace-nowrap text-sm  sm:text-xl font-bold dark:text-white'>
          <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>Skills</span>
          Exchange
@@ -32,7 +35,7 @@ function Header() {
     className={`block py-1 ${
       path === '/home'
         ? 'text-blue-600 rounded px-2'
-        : 'text-gray-700 dark:text-white'
+        : 'dark:text-gray-700 text-white'
     }`}
   >
     Home
@@ -42,7 +45,7 @@ function Header() {
     className={`block py-1 ${
       path === '/about'
         ? 'text-blue-600 rounded px-2'
-        : 'text-gray-700 dark:text-white'
+        : 'dark:text-gray-700 text-white'
     }`}
   >
     About
@@ -52,7 +55,7 @@ function Header() {
     className={`block py-1 ${
       path === '/projects'
         ? ' text-blue-600 rounded px-2'
-        : 'text-gray-700 dark:text-white'
+        : 'dark:text-gray-700 text-white'
     }`}
   >
     Projects
@@ -63,8 +66,8 @@ function Header() {
       <AiOutlineSearch />
       </Button >
       <div className='flex gap-2 md:order-2'>
-        <Button className='w-12 h-10 hidden sm:inline  ' color='light' pill>
-          <FaMoon/>
+        <Button className={`w-12 h-10 hidden sm:inline `}  color='light' pill onClick={()=>dispatch(toggleTheme())}>
+          {theme === 'light' ?  <FaSun/> :  <FaMoon  />}
         </Button >
          {
             currentUser ? (

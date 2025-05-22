@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {Alert, Button, Label, Spinner, TextInput} from 'flowbite-react';
 import OAuth from '../components/OAuth';
+import { useSelector } from 'react-redux';
 
 function SignUp() {
 
@@ -14,6 +15,7 @@ function SignUp() {
 
   const [errorMessage , setErrorMessage] = useState(null);
   const [loading , setLoading] = useState(false);
+  const   {theme}  = useSelector(state => state.theme);
   const handleSubmit = async (e) =>{
           e.preventDefault()
           if(!formData.username || !formData.email || !formData.password){
@@ -43,7 +45,7 @@ function SignUp() {
           }
   }
   return (
-    <div className='min-h-screen mt-20'>
+    <div className={`min-h-screen mt-20  ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'} `} >
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
           {/* left  */}
         <div className='flex-1'>
