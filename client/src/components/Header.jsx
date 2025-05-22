@@ -2,14 +2,16 @@ import React from 'react'
 import {Link , useLocation} from 'react-router-dom'
 import {AiOutlineSearch} from 'react-icons/ai'
 import {FaMoon} from 'react-icons/fa'
-import { Navbar, Button, TextInput } from 'flowbite-react';
+import { Navbar, Button, TextInput, Dropdown, Avatar ,DropdownHeader, DropdownItem, DropdownDivider, } from 'flowbite-react';
 import { HiMenu } from 'react-icons/hi';
 import { useState } from 'react';
+import {useSelector} from 'react-redux';
+
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const path = useLocation().pathname;
-
+  const  {currentUser} = useSelector(state => state.user);
   return (
     <Navbar className='border-b-2'>
       <Link to="/" className='self-center whitespace-nowrap text-sm  sm:text-xl font-bold dark:text-white'>
@@ -64,11 +66,29 @@ function Header() {
         <Button className='w-12 h-10 hidden sm:inline  ' color='light' pill>
           <FaMoon/>
         </Button >
-        <Link to='/sign-in'>
-          <Button  outline >
+         {
+            currentUser ? (
+              <Dropdown arrowIcon={false} inline label={<Avatar alt='user' img={currentUser.profilePicture} rounded />}>
+              <DropdownHeader>
+                     <span className='block text-sm'>@{currentUser.username}</span>
+                     <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
+              </DropdownHeader>
+              <Link to='/dashboard?tab=profile'>
+              <DropdownItem> Profile </DropdownItem>
+              <DropdownDivider/>
+              <DropdownItem> Sign out </DropdownItem>
+              </Link>
+
+              </Dropdown>
+            ) : (
+                <Link to='/sign-in'>
+         <Button  outline >
             Sign in
           </Button>
         </Link>
+            )
+          }
+      
          
    {/* Collapse Menu for Mobile */}
 {/* Hamburger Icon Button */}
