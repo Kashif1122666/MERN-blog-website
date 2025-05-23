@@ -7,6 +7,7 @@ import { HiMenu } from 'react-icons/hi';
 import { useState } from 'react';
 import {useSelector , useDispatch} from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
+import { useEffect } from 'react';
 
 
 function Header() {
@@ -15,6 +16,24 @@ function Header() {
   const dispatch = useDispatch();
   const  {currentUser} = useSelector(state => state.user);
   const   {theme}  = useSelector(state => state.theme);
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (theme === 'dark') {
+      // Dark theme styles
+      html.style.backgroundColor = 'rgb(16,23,42)';
+      html.style.color = 'rgb(229, 231, 235)';
+      body.style.backgroundColor = 'rgb(16,23,42)';
+      body.style.color = 'rgb(229, 231, 235)';
+    } else {
+      // Light theme styles
+      html.style.backgroundColor = 'white';
+      html.style.color = 'rgb(55, 65, 81)';
+      body.style.backgroundColor = 'white';
+      body.style.color = 'rgb(55, 65, 81)';
+    }
+  }, [theme]);
   return (
     <Navbar className={`border-b-2 ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'}`} >
       <Link to="/" className={`self-center whitespace-nowrap text-sm  sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>
