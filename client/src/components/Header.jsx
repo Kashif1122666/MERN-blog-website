@@ -114,42 +114,63 @@ function Header() {
          
    {/* Collapse Menu for Mobile */}
 {/* Hamburger Icon Button */}
+{/* Mobile Menu Button (Hamburger) */}
 <button
-  className={`lg:hidden p-2 text-gray-700 ${theme === 'dark' ? 'text-white' : ''}`}
+  className={`lg:hidden p-2 ${theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'} rounded-lg transition-colors`}
   onClick={() => setMenuOpen(!menuOpen)}
 >
   <HiMenu className="w-6 h-6" />
 </button>
+
+{/* Mobile Dropdown Menu */}
 {menuOpen && (
-  <div className={`lg:hidden absolute top-16 right-2 bg-white ${theme === 'dark' ? 'bg-gray-800' : ''} rounded shadow-md p-4 z-50`}>
+  <div className={`
+    lg:hidden absolute top-16 right-2 rounded-lg shadow-lg p-2 z-50
+    ${theme === 'dark' 
+      ? 'bg-[rgb(16,23,42)] border border-gray-700' 
+      : 'bg-white border border-gray-200'
+    }
+  `}>
     <Link
-  to="/home"
-  className={`block py-1 ${
-    path === '/home'
-      ? 'bg-blue-500 text-white rounded px-2'
-      : (` ${theme === 'dark' ?  'text-white' : ' text-gray-700'} `)
-  }`}
->
+      to="/home"
+      className={`
+        block py-2 px-3 rounded-md mb-1 transition-colors
+        ${path === '/home'
+          ? 'bg-blue-500 text-white'
+          : theme === 'dark'
+            ? 'text-gray-200 hover:bg-gray-700'
+            : 'text-gray-700 hover:bg-gray-100'
+        }
+      `}
+    >
       Home
     </Link>
     <Link
-  to="/about"
-  className={`block py-1 ${
-    path === '/about'
-      ? 'bg-blue-500 text-white rounded px-2'
-      : (` ${theme === 'dark' ?  'text-white' : ' text-gray-700'} `)
-  }`}
->
+      to="/about"
+      className={`
+        block py-2 px-3 rounded-md mb-1 transition-colors
+        ${path === '/about'
+          ? 'bg-blue-500 text-white'
+          : theme === 'dark'
+            ? 'text-gray-200 hover:bg-gray-700'
+            : 'text-gray-700 hover:bg-gray-100'
+        }
+      `}
+    >
       About
     </Link>
     <Link
-  to="/projects"
-  className={`block py-1 ${
-    path === '/projects'
-      ? 'bg-blue-500 text-white rounded px-2'
-      : (` ${theme === 'dark' ?  'text-white' : ' text-gray-700'} `)
-  }`}
->
+      to="/projects"
+      className={`
+        block py-2 px-3 rounded-md transition-colors
+        ${path === '/projects'
+          ? 'bg-blue-500 text-white'
+          : theme === 'dark'
+            ? 'text-gray-200 hover:bg-gray-700'
+            : 'text-gray-700 hover:bg-gray-100'
+        }
+      `}
+    >
       Projects
     </Link>
   </div>
