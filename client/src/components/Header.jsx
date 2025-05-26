@@ -90,7 +90,7 @@ function Header() {
         </Button >
          {
             currentUser ? (
-              <Dropdown arrowIcon={false} inline label={<Avatar alt='user' img={currentUser.profilePicture} rounded />}>
+              <Dropdown arrowIcon={false} inline label={<Avatar alt='user' img={ currentUser.photoURL || currentUser.profilePicture} rounded />}>
               <DropdownHeader>
                      <span className='block text-sm'>@{currentUser.username}</span>
                      <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
