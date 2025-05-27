@@ -8,6 +8,8 @@ import { useState } from 'react';
 import {useSelector , useDispatch} from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { useEffect } from 'react';
+import { signoutSuccess } from '../redux/user/userSlice';
+
 
 
 function Header() {
@@ -34,6 +36,21 @@ function Header() {
       body.style.color = 'rgb(55, 65, 81)';
     }
   }, [theme]);
+   const handleSignout = async () => {
+               try {
+                 const res = await fetch('/api/user/signout', {
+                   method: 'POST',
+                 });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    console.log(data.message);
+                  }else{
+                    dispatch(signoutSuccess());
+                  }
+               } catch (error) {
+                 console.log("Error signing out:", error);
+               }
+             };
   return (
     <Navbar className={`border-b-2 ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'}`} >
       <Link to="/" className={`self-center whitespace-nowrap text-sm  sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>
@@ -98,7 +115,7 @@ function Header() {
               <Link to='/dashboard?tab=profile'>
               <DropdownItem> Profile </DropdownItem>
               <DropdownDivider/>
-              <DropdownItem> Sign out </DropdownItem>
+              <DropdownItem onClick={handleSignout}> Sign out </DropdownItem>
               </Link>
 
               </Dropdown>
