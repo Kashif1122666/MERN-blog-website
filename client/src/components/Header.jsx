@@ -121,7 +121,7 @@ function Header() {
               </Dropdown>
             ) : (
                 <Link to='/sign-in'>
-         <Button  outline >
+         <Button  outline className='cursor-pointer'>
             Sign in
           </Button>
         </Link>

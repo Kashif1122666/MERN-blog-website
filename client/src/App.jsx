@@ -17,7 +17,7 @@ function App() {
     <BrowserRouter>
        <Header/>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/sign-in" element={<Signin />} />
         <Route path="/sign-up" element={<SignUp />} />
@@ -25,8 +25,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         </Route>
         <Route element={<OnlyAdminPrivateRoute/>}>
-        </Route>
         <Route path="/create-post" element={<CreatePost />} />
+        </Route>
         <Route path="/projects" element={<Projects />} />
         
         
