@@ -1,5 +1,14 @@
 @import "tailwindcss";
-@plugin "flowbite-react/plugin/tailwindcss";
-@source "../.flowbite-react/class-list.json";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+body{
+    height: 100vh;
+}
+.mce-content-body {
+    font-size: 1.05rem;
+  
+}
 
 

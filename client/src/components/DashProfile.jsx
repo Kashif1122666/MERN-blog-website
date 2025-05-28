@@ -4,9 +4,10 @@ import { useSelector } from 'react-redux'
 import { updateStart,updateSuccess,updateFailure , deleteUserStart,deleteUserFailure,deleteUserSuccess,signoutSuccess } from '../redux/user/userSlice';
 import {HiOutlineExclamationCircle} from 'react-icons/hi';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const DashProfile = () => {
-  const {currentUser , error} = useSelector(state => state.user);
+  const {currentUser , error , loading} = useSelector(state => state.user);
   const [imageFile , setImageFile] = useState(null);
   const [imageFileUrl , setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
@@ -118,7 +119,16 @@ const DashProfile = () => {
          <TextInput type='text' id='username' placeholder='username' defaultValue={currentUser.username} onChange={handleChange} />
          <TextInput type='email' id='email' placeholder='email' defaultValue={currentUser.email} onChange={handleChange} />
          <TextInput type='password' id='password' placeholder='Password' onChange={handleChange} />
-         <Button type='submit' className='bg-gradient-to-br from-purple-500 to-blue-600 outline hover:from-purple-400 hover:to-blue-400'>Update</Button>
+         <Button type='submit' className='bg-gradient-to-br from-purple-500 to-blue-600 outline hover:from-purple-400 hover:to-blue-400' disabled={loading }>{
+            loading ? "Updating..." : "Update Profile"
+          }</Button>
+         {
+          currentUser.isAdmin && (
+            <Link to='/create-post'>
+            <Button type='button' className=' w-full bg-gradient-to-br from-purple-500 to-blue-600 outline hover:from-purple-400 hover:to-blue-400'>Create a Post</Button>
+            </Link>
+          )
+         }
          </form>
          <div className='text-red-500 flex justify-between mt-5'>
               <span onClick={()=> setShowModal(true)} className='cursor-pointer'>Delete Account</span>
