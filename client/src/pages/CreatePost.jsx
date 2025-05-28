@@ -63,24 +63,63 @@ const CreatePost = () => {
           </Button>
         </div>
 
-        <Editor
-          apiKey="wkchnbnblx997wceio6j0dacqib8kgy7h3qsdv3qlbddvbz0"
-          value={content}                       // added to control content
-          onEditorChange={(newContent) => setContent(newContent)}  // update content state
-          init={{
-            height: 500,
-            menubar: false,
-            plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount"
-            ],
-            toolbar:
-              "undo redo | formatselect | bold italic backcolor | \
-              alignleft aligncenter alignright alignjustify | \
-              bullist numlist outdent indent | removeformat | help"
-          }}
-        />
+       <Editor
+  apiKey="wkchnbnblx997wceio6j0dacqib8kgy7h3qsdv3qlbddvbz0"
+  value={content}
+  onEditorChange={(newContent) => setContent(newContent)}
+  init={{
+    height: 500,
+    menubar: false,
+    plugins: [
+      "advlist autolink lists link image charmap print preview anchor",
+      "searchreplace visualblocks code fullscreen",
+      "insertdatetime media table paste code help wordcount"
+    ],
+    toolbar:
+      "undo redo | formatselect | bold italic backcolor | \
+      alignleft aligncenter alignright alignjustify | \
+      bullist numlist outdent indent | removeformat | help",
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; } .mce-placeholder { color: #888; }',
+    setup: (editor) => {
+      const placeholder = 'Write something...';
+
+      function togglePlaceholder() {
+        const content = editor.getContent({ format: 'text' }).trim();
+        if (!content) {
+          editor.getBody().classList.add('mce-placeholder');
+          if (editor.getContent() === '') {
+            editor.setContent('');
+          }
+          editor.setContent(placeholder);
+        } else if (content === placeholder) {
+          editor.getBody().classList.add('mce-placeholder');
+        } else {
+          editor.getBody().classList.remove('mce-placeholder');
+        }
+      }
+
+      editor.on('init', () => {
+        togglePlaceholder();
+      });
+
+      editor.on('focus', () => {
+        if (editor.getContent({ format: 'text' }) === placeholder) {
+          editor.setContent('');
+          editor.getBody().classList.remove('mce-placeholder');
+        }
+      });
+
+      editor.on('blur', () => {
+        togglePlaceholder();
+      });
+
+      editor.on('keyup', () => {
+        togglePlaceholder();
+      });
+    }
+  }}
+/>
+
 
         <Button
           type="submit"   
