@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import DashSidebar from '../components/DashSidebar';
 import DashProfile from '../components/DashProfile';
+import DashPosts from '../components/DashPosts';
 
 function Dashboard() {
       const   {theme}  = useSelector(state => state.theme);
@@ -24,6 +25,8 @@ function Dashboard() {
         </div>
             {/* profile..*/}
            {tab === 'profile' && <DashProfile/>}
+           {/* posts  */}
+           {tab === 'posts' && <DashPosts/>}
     </div>
     
   )
