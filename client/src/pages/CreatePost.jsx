@@ -1,26 +1,82 @@
 import { useSelector } from 'react-redux';
 import React, { useState } from 'react';
-import { TextInput, Select, FileInput, Button } from 'flowbite-react';
+import { TextInput, Select, FileInput, Button, Alert ,Spinner } from 'flowbite-react';
 import { Editor } from "@tinymce/tinymce-react";
+import {CircularProgressbar}  from 'react-circular-progressbar'
+import axios from 'axios';
 
 const CreatePost = () => {
   const { theme } = useSelector(state => state.theme);
   const [content, setContent] = useState('');
+  const [file,setFile] = useState(null);
+  const [imageUploadProgress , setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [formData , setFormData] = useState({});
   const [whatsappNumber, setWhatsappNumber] = useState('');
 
   // Added form submit handler to validate required fields
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!content.trim()) {
       alert('Please enter the post content.');
       return;
     }
+
     if (!whatsappNumber.match(/^\d{10,15}$/)) {
       alert('Please enter a valid WhatsApp number (10-15 digits).');
       return;
     }
-    // Proceed with your submission logic here
-    alert('Form submitted successfully!');
+
+    try {
+      const postPayload = {
+        ...formData,
+        title: e.target.title.value,
+        category: e.target.category.value,
+        content,
+        whatsapp: whatsappNumber
+      };
+
+      const res = await axios.post('/api/posts', postPayload); // adjust URL if needed
+      alert('Post created!');
+    } catch (err) {
+      alert('Failed to submit the post.');
+      console.error(err);
+    }
+  };
+
+  const handleUploadImage = async () => {
+    try {
+      if (!file) {
+        setImageUploadError('Please Select an image');
+        return;
+      }
+
+      setImageUploadError(null);
+      setImageUploadProgress(true); // show loading
+
+      const uploadData = new FormData();  // renamed from formData
+      uploadData.append("file", file);
+      uploadData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET); 
+      uploadData.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME); 
+
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,  // fixed env var usage here
+        uploadData
+      );
+
+      const imageUrl = res.data.secure_url;
+
+      setFormData((prev) => ({ ...prev, image: imageUrl }));
+      setImageUploadProgress(false);
+} catch (error) {
+  console.error("Cloudinary Upload Error:", error.response?.data || error.message || error);
+  setImageUploadError(
+    error.response?.data?.error?.message || 'Image Upload failed'
+  );
+  setImageUploadProgress(false);
+}
+
   };
 
   return (
@@ -53,73 +109,95 @@ const CreatePost = () => {
         />
 
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-          <FileInput id="imageUpload" accept="image/*" />
+          <FileInput id="imageUpload" accept="image/*" onChange={(e)=>setFile(e.target.files[0])}/>
           <Button
             type="button"
             className={`text-white cursor-pointer bg-gradient-to-r from-purple-500 to-blue-500 hover:from-blue-500 hover:to-pink-700 transition-all duration-300 px-4 py-2 rounded-lg`}
             size="sm"
+            onClick={handleUploadImage}
+            disabled={imageUploadProgress}
           >
-            Upload Image
+            {
+              imageUploadProgress ? (
+  <div className="flex items-center gap-2">
+    <Spinner size="sm" />
+    <span>Uploading...</span>
+  </div>
+) : (
+  'Upload Image'
+)
+
+            }
           </Button>
         </div>
+      {imageUploadError && (
+  <div className="bg-white text-red-600 border border-red-300 px-4 py-2 rounded shadow">
+    {imageUploadError}
+  </div>
+)}
 
-       <Editor
-  apiKey="wkchnbnblx997wceio6j0dacqib8kgy7h3qsdv3qlbddvbz0"
-  value={content}
-  onEditorChange={(newContent) => setContent(newContent)}
-  init={{
-    height: 500,
-    menubar: false,
-    plugins: [
-      "advlist autolink lists link image charmap print preview anchor",
-      "searchreplace visualblocks code fullscreen",
-      "insertdatetime media table paste code help wordcount"
-    ],
-    toolbar:
-      "undo redo | formatselect | bold italic backcolor | \
-      alignleft aligncenter alignright alignjustify | \
-      bullist numlist outdent indent | removeformat | help",
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; } .mce-placeholder { color: #888; }',
-    setup: (editor) => {
-      const placeholder = 'Write something...';
-
-      function togglePlaceholder() {
-        const content = editor.getContent({ format: 'text' }).trim();
-        if (!content) {
-          editor.getBody().classList.add('mce-placeholder');
-          if (editor.getContent() === '') {
-            editor.setContent('');
-          }
-          editor.setContent(placeholder);
-        } else if (content === placeholder) {
-          editor.getBody().classList.add('mce-placeholder');
-        } else {
-          editor.getBody().classList.remove('mce-placeholder');
+        {
+          formData.image && (
+            <img src={formData.image} alt="upload" className='w-full h-72 object-cover' />
+          ) 
         }
-      }
 
-      editor.on('init', () => {
-        togglePlaceholder();
-      });
+        <Editor
+          apiKey="wkchnbnblx997wceio6j0dacqib8kgy7h3qsdv3qlbddvbz0"
+          value={content}
+          onEditorChange={(newContent) => setContent(newContent)}
+          init={{
+            height: 500,
+            menubar: false,
+            plugins: [
+              "advlist autolink lists link image charmap print preview anchor",
+              "searchreplace visualblocks code fullscreen",
+              "insertdatetime media table paste code help wordcount"
+            ],
+            toolbar:
+              "undo redo | formatselect | bold italic backcolor | \
+              alignleft aligncenter alignright alignjustify | \
+              bullist numlist outdent indent | removeformat | help",
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; } .mce-placeholder { color: #888; }',
+            setup: (editor) => {
+              const placeholder = 'Write something...';
 
-      editor.on('focus', () => {
-        if (editor.getContent({ format: 'text' }) === placeholder) {
-          editor.setContent('');
-          editor.getBody().classList.remove('mce-placeholder');
-        }
-      });
+              function togglePlaceholder() {
+                const content = editor.getContent({ format: 'text' }).trim();
+                if (!content) {
+                  editor.getBody().classList.add('mce-placeholder');
+                  if (editor.getContent() === '') {
+                    editor.setContent('');
+                  }
+                  editor.setContent(placeholder);
+                } else if (content === placeholder) {
+                  editor.getBody().classList.add('mce-placeholder');
+                } else {
+                  editor.getBody().classList.remove('mce-placeholder');
+                }
+              }
 
-      editor.on('blur', () => {
-        togglePlaceholder();
-      });
+              editor.on('init', () => {
+                togglePlaceholder();
+              });
 
-      editor.on('keyup', () => {
-        togglePlaceholder();
-      });
-    }
-  }}
-/>
+              editor.on('focus', () => {
+                if (editor.getContent({ format: 'text' }) === placeholder) {
+                  editor.setContent('');
+                  editor.getBody().classList.remove('mce-placeholder');
+                }
+              });
 
+              editor.on('blur', () => {
+                togglePlaceholder();
+              });
+
+              editor.on('keyup', () => {
+                togglePlaceholder();
+              });
+            }
+          }}
+        />
 
         <Button
           type="submit"   
