@@ -9,6 +9,11 @@ export const create = async (req,res,next) => {
             return next(errorHandler(400, 'Please provide all required fields'))
        }
        const slug = req.body.title.split(' ').join('-').toLowerCase().replace(/[^a-zA-Z0-9-]/g,'');
+       const existingPost = await Post.findOne({ slug });
+
+if (existingPost) {
+  return  res.status(409).json( {mesage:'Post with this title already exists', success:false});
+}
        const newPost = new Post( {
            ...req.body,slug,userId: req.user.id
        });

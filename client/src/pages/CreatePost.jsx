@@ -1,18 +1,19 @@
 import { useSelector } from 'react-redux';
 import React, { useState } from 'react';
-import { TextInput, Select, FileInput, Button, Alert ,Spinner } from 'flowbite-react';
+import { TextInput, Select, FileInput, Button ,Spinner } from 'flowbite-react';
 import { Editor } from "@tinymce/tinymce-react";
-import {CircularProgressbar}  from 'react-circular-progressbar'
 import axios from 'axios';
+import {data, useNavigate}  from 'react-router-dom'
 
 const CreatePost = () => {
   const { theme } = useSelector(state => state.theme);
   const [content, setContent] = useState('');
   const [file,setFile] = useState(null);
-  const [imageUploadProgress , setImageUploadProgress] = useState(null);
+  const [imageUploadProgress , setImageUploadProgress] = useState(false);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData , setFormData] = useState({});
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const navigate = useNavigate();
 
   // Added form submit handler to validate required fields
   const handleSubmit = async (e) => {
@@ -33,14 +34,17 @@ const CreatePost = () => {
         ...formData,
         title: e.target.title.value,
         category: e.target.category.value,
-        content,
-        whatsapp: whatsappNumber
+        content: formData.content,
+        whatsapp: whatsappNumber,
+        image: formData.image,
       };
 
-      const res = await axios.post('/api/posts', postPayload); // adjust URL if needed
+      const res = await axios.post('/api/post/create', postPayload); // adjust URL if needed
       alert('Post created!');
+      navigate(`/post/${res.data.slug}`)
+      
     } catch (err) {
-      alert('Failed to submit the post.');
+      alert(err.response.data.mesage);
       console.error(err);
     }
   };
@@ -84,8 +88,12 @@ const CreatePost = () => {
       <h1 className='text-center text-3xl my-7 font-semibold'>Create a Post</h1>
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <div className='flex flex-col gap-4 sm:flex-row justify-between'>
-          <TextInput type='text' placeholder='Title' required id='title' className='flex-1' />
-          <Select id="category" required>
+          <TextInput type='text' placeholder='Title' required id='title' className='flex-1' onChange={(e)=>
+            setFormData({...formData,title:e.target.value})
+          } />
+          <Select id="category" required onChange={(e)=>
+            setFormData({...formData,category:e.target.value})
+          }>
             <option value="">Select a category &nbsp;&nbsp;&nbsp;&nbsp;</option>
             <option value="health">Health</option>
             <option value="sports">Sports</option>
@@ -99,9 +107,11 @@ const CreatePost = () => {
           placeholder="Enter WhatsApp number"
           id="whatsapp"
           value={whatsappNumber}
-          onChange={(e) =>
-            setWhatsappNumber(e.target.value.replace(/\D/g, ''))
-          }
+        onChange={(e) => {
+  const val = e.target.value.replace(/\D/g, '');
+  setWhatsappNumber(val);
+  setFormData(prev => ({ ...prev, whatsapp: val }));
+}}
           pattern="^\d{10,15}$"
           inputMode="numeric"
           maxLength={15}
@@ -109,7 +119,20 @@ const CreatePost = () => {
         />
 
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-          <FileInput id="imageUpload" accept="image/*" onChange={(e)=>setFile(e.target.files[0])}/>
+          <FileInput
+          className={` ${theme === 'dark' ? 'text-white':'' }`}
+  id="imageUpload"
+  accept="image/*"
+  onChange={(e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    if (selectedFile) {
+      setImageUploadError(null);       
+            setFormData(prev => ({ ...prev, image: null })); 
+    }
+  }}
+/>
+
           <Button
             type="button"
             className={`text-white cursor-pointer bg-gradient-to-r from-purple-500 to-blue-500 hover:from-blue-500 hover:to-pink-700 transition-all duration-300 px-4 py-2 rounded-lg`}
@@ -142,62 +165,33 @@ const CreatePost = () => {
           ) 
         }
 
-        <Editor
-          apiKey="wkchnbnblx997wceio6j0dacqib8kgy7h3qsdv3qlbddvbz0"
-          value={content}
-          onEditorChange={(newContent) => setContent(newContent)}
-          init={{
-            height: 500,
-            menubar: false,
-            plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount"
-            ],
-            toolbar:
-              "undo redo | formatselect | bold italic backcolor | \
-              alignleft aligncenter alignright alignjustify | \
-              bullist numlist outdent indent | removeformat | help",
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; } .mce-placeholder { color: #888; }',
-            setup: (editor) => {
-              const placeholder = 'Write something...';
+       <Editor
+  apiKey="wkchnbnblx997wceio6j0dacqib8kgy7h3qsdv3qlbddvbz0"
+  value={content}
+  onEditorChange={(newContent) => {
+    setContent(newContent); 
+    setFormData(prev => ({ ...prev, content: newContent }));
+  }}
+  init={{
+    height: 500,
+    menubar: false,
+    plugins: [
+      "advlist autolink lists link image charmap print preview anchor",
+      "searchreplace visualblocks code fullscreen",
+      "insertdatetime media table paste code help wordcount"
+    ],
+    toolbar:
+      "undo redo | formatselect | bold italic backcolor | \
+      alignleft aligncenter alignright justify | \
+      bullist numlist outdent indent | removeformat | help",
+    content_style:
+      'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; } .mce-placeholder { color: #888; }',
+    
+    // ✅ Native placeholder
+    placeholder: "Write something..."
+  }}
+/>
 
-              function togglePlaceholder() {
-                const content = editor.getContent({ format: 'text' }).trim();
-                if (!content) {
-                  editor.getBody().classList.add('mce-placeholder');
-                  if (editor.getContent() === '') {
-                    editor.setContent('');
-                  }
-                  editor.setContent(placeholder);
-                } else if (content === placeholder) {
-                  editor.getBody().classList.add('mce-placeholder');
-                } else {
-                  editor.getBody().classList.remove('mce-placeholder');
-                }
-              }
-
-              editor.on('init', () => {
-                togglePlaceholder();
-              });
-
-              editor.on('focus', () => {
-                if (editor.getContent({ format: 'text' }) === placeholder) {
-                  editor.setContent('');
-                  editor.getBody().classList.remove('mce-placeholder');
-                }
-              });
-
-              editor.on('blur', () => {
-                togglePlaceholder();
-              });
-
-              editor.on('keyup', () => {
-                togglePlaceholder();
-              });
-            }
-          }}
-        />
 
         <Button
           type="submit"   
