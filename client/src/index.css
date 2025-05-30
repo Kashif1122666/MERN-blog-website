@@ -2,6 +2,7 @@
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
+@plugin 'tailwind-scrollbar';
 
 body{
     height: 100vh;
