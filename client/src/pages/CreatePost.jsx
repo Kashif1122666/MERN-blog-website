@@ -43,10 +43,20 @@ const CreatePost = () => {
       alert('Post created!');
       navigate(`/post/${res.data.slug}`)
       
-    } catch (err) {
-      alert(err.response.data.mesage);
-      console.error(err);
+    } catch (error) {
+  if (error.response) {
+    // This is the message sent from backend
+    const backendMessage = error.response.data.message;
+
+    if (error.response.status === 409) {
+      alert(backendMessage);  // Show "Post with this title already exists"
+    } else {
+      alert(backendMessage || 'An error occurred');
     }
+  } else {
+    alert('Network error or no response from server');
+  }
+}
   };
 
   const handleUploadImage = async () => {

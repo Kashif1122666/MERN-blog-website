@@ -12,7 +12,7 @@ export const create = async (req,res,next) => {
        const existingPost = await Post.findOne({ slug });
 
 if (existingPost) {
-  return  res.status(409).json( {mesage:'Post with this title already exists', success:false});
+  return  next(errorHandler(409, 'Post with this title already exists'))
 }
        const newPost = new Post( {
            ...req.body,slug,userId: req.user.id

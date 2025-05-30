@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 const DashPosts = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+  const [showMore, setShowMore] = useState(true);
   const [userPosts, setUserPosts] = useState([]);
 
   useEffect(() => {
@@ -15,6 +16,9 @@ const DashPosts = () => {
           const data = await res.json();
           if (res.ok) {
             setUserPosts(data.posts);
+            if (data.posts.length < 9) {
+                setShowMore(false)
+            }
           }
         } catch (error) {
           console.log(error.message);
@@ -26,9 +30,26 @@ const DashPosts = () => {
 
   const isDark = theme === 'dark';
 
+  const handleShowMore = async ()=> {
+           const startIndex = userPosts.length;
+           try {
+              const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+              const data = await res.json();
+              console.log(data)
+              if (res.ok) {
+                setUserPosts((prev)=> [...prev,...data.posts])
+                if (data.posts?.length < 9) {
+                    setShowMore(false);
+                }
+              }
+           } catch (error) {
+              console.log(error.message)
+           }
+  }
+
   return (
     <div className="w-full px-4 py-6">
-      {currentUser?.isAdmin && userPosts.length >= 0 ? (
+      {currentUser?.isAdmin && userPosts.length > 0 ? (
         <div className="w-full overflow-x-auto">
           <table
             className={`w-full min-w-[800px] text-sm text-left border rounded-lg ${
@@ -82,7 +103,7 @@ const DashPosts = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link
                       to={`/update-post/${post._id}`}
-                      className="text-green-600 hover:underline"
+                      className="text-teal-500 hover:underline"
                     >
                       Edit
                     </Link>
@@ -91,6 +112,9 @@ const DashPosts = () => {
               ))}
             </tbody>
           </table>
+            {
+              showMore &&  <button onClick={handleShowMore} className='w-full text-teal-500 self-center text-sm py-7'>Show more</button>
+            }
         </div>
       ) : (
         <p className={`text-center ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
