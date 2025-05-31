@@ -1,4 +1,6 @@
+import { Button, Modal, ModalBody, ModalHeader } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +9,8 @@ const DashPosts = () => {
   const { theme } = useSelector((state) => state.theme);
   const [showMore, setShowMore] = useState(true);
   const [userPosts, setUserPosts] = useState([]);
+  const [showModal , setShowModal] = useState(false);
+  const [postIdToDelete,setPostIdToDelete] = useState('');
 
   useEffect(() => {
     if (currentUser?.isAdmin) {
@@ -47,6 +51,24 @@ const DashPosts = () => {
            }
   }
 
+  const handleDeletePost = async ()=>{
+             setShowModal(false);
+             try {
+                     const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
+                        method:'DELETE',
+                     });  
+                     const data = await res.json();
+                     if (!res.ok) {
+                         console.log(data.message)
+                     } else{
+                       setUserPosts((prev)=>
+                            prev.filter((post)=>post._id !== postIdToDelete)
+                      )
+                     }           
+             } catch (error) {
+               console.log(error)
+             }
+  }
   return (
     <div className="w-full px-4 py-6">
       {currentUser?.isAdmin && userPosts.length > 0 ? (
@@ -98,7 +120,10 @@ const DashPosts = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">{post.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-red-600 hover:underline cursor-pointer">Delete</span>
+                    <span onClick={() =>{
+                          setShowModal(true)
+                          setPostIdToDelete(post._id)
+                    }} className="text-red-600 hover:underline cursor-pointer">Delete</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link
@@ -121,6 +146,26 @@ const DashPosts = () => {
           No posts yet!
         </p>
       )}
+      <Modal show={showModal} onClose={()=> setShowModal(false)} popup size='md'>
+                  <ModalHeader/>
+                  <ModalBody>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className="mx-auto h-14 w-14 text-gray-500 dark:text-gray-400" />
+                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                           Are you sure you want to delete this Post?
+                                </h3>
+                               <div className="flex justify-center gap-4">
+        <Button  className='bg-red-600' onClick={handleDeletePost}>
+          Yes, I'm sure
+        </Button>
+        <Button color='gray' onClick={() => setShowModal(false)}>
+          No, cancel
+        </Button>
+      </div>
+      
+                    </div>
+                  </ModalBody>
+               </Modal>
     </div>
   );
 };
