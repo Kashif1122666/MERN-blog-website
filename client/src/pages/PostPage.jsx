@@ -2,12 +2,13 @@ import { Button, Spinner } from 'flowbite-react';
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import CallToAction from '../components/CallToAction';
+import CommentSection from '../components/CommentSection';
 
 const PostPage = () => {
     const {postslug} = useParams();
     const [loading , setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [post , setPost] = useState(null);
+    const [post , setPost] = useState(null );
    
 
     useEffect(()=>{
@@ -55,8 +56,9 @@ const PostPage = () => {
         <div className='p-3 max-w-2xl mx-auto w-full post-content' dangerouslySetInnerHTML={{__html: post && post.content }}>            
         </div>
           <div className='max-w-4xl mx-auto w-full'>
-            <CallToAction/>
+            <CallToAction postWhatsapp={post.whatsapp}/>
           </div>
+          <CommentSection postId={post._id}/>
     </main>
   )
 }
