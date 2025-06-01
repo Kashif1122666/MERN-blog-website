@@ -98,3 +98,4 @@ export const updatePost = async (req , res, next) =>{
                next(error)
              }
 }
+
