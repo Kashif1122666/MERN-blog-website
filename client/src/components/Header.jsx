@@ -18,6 +18,8 @@ function Header() {
   const dispatch = useDispatch();
   const  {currentUser} = useSelector(state => state.user);
   const   {theme}  = useSelector(state => state.theme);
+const [avatarSrc, setAvatarSrc] = useState('');
+
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -51,6 +53,28 @@ function Header() {
                  console.log("Error signing out:", error);
                }
              };
+
+
+             useEffect(() => {
+  const url = currentUser?.profilePicture || currentUser?.photoURL;
+
+  if (!url) {
+    setAvatarSrc('/default-avatar.png'); // fallback image
+    return;
+  }
+
+  const img = new Image();
+  img.src = url;
+
+  img.onload = () => {
+    setAvatarSrc(url);
+  };
+
+  img.onerror = () => {
+    setAvatarSrc('/default-avatar.png'); // fallback if failed to load
+  };
+}, [currentUser]);
+
   return (
     <Navbar className={`border-b-2 ${theme === 'light' ? 'bg-white text-gray-700' : 'text-gray-200 bg-[rgb(16,23,42)]'}`} >
       <Link to="/" className={`self-center whitespace-nowrap text-sm  sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>
