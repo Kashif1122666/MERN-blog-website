@@ -1,4 +1,4 @@
-import { HiUser, HiArrowSmRight, HiDocument, HiDocumentText, HiOutlineUserGroup } from 'react-icons/hi';
+import { HiUser, HiArrowSmRight, HiDocument, HiDocumentText, HiOutlineUserGroup, HiAnnotation } from 'react-icons/hi';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
@@ -81,6 +81,25 @@ const DashSidebar = () => {
               
               <HiOutlineUserGroup className="mr-3 text-lg" />
               <span className="font-medium hidden md:inline">Users</span>
+              
+            </Link>
+          </li>
+            )
+          }
+           {
+            currentUser.isAdmin && (
+              <li className="flex-1 md:flex-none">
+            <Link 
+              to='/dashboard?tab=comments'
+              className={`flex items-center p-2 rounded-lg transition-colors ${
+                tab === 'comments' 
+                  ? (`bg-blue-100 text-blue-700 ${theme === 'dark' ? 'bg-blue-900/30 text-blue-400' : ''}  `) 
+                  : (`hover:bg-gray-100 ${theme === 'dark' ? 'hover:bg-gray-700/50' : ''} `)
+              }`}
+            >
+              
+              <HiAnnotation className="mr-3 text-lg" />
+              <span className="font-medium hidden md:inline">Comments</span>
               
             </Link>
           </li>
