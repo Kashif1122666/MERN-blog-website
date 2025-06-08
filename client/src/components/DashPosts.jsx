@@ -12,44 +12,89 @@ const DashPosts = () => {
   const [showModal , setShowModal] = useState(false);
   const [postIdToDelete,setPostIdToDelete] = useState('');
 
+  // useEffect(() => {
+  //   if (currentUser?.isAdmin) {
+  //     const fetchPosts = async () => {
+  //       try {
+  //         const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+  //         const data = await res.json();
+  //         if (res.ok) {
+  //           setUserPosts(data.posts);
+  //           if (data.posts.length < 9) {
+  //               setShowMore(false)
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.log(error.message);
+  //       }
+  //     };
+  //     fetchPosts();
+  //   }
+  // }, [currentUser]);
+
   useEffect(() => {
-    if (currentUser?.isAdmin) {
-      const fetchPosts = async () => {
-        try {
-          const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
-          const data = await res.json();
-          if (res.ok) {
-            setUserPosts(data.posts);
-            if (data.posts.length < 9) {
-                setShowMore(false)
-            }
+  if (currentUser?.isAdmin) {
+    const fetchPosts = async () => {
+      try {
+        // If superAdmin, no userId filter, else filter by current userId
+        const queryUserId = currentUser.isSuperAdmin ? '' : `userId=${currentUser._id}`;
+        const url = `/api/post/getposts?${queryUserId}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (res.ok) {
+          setUserPosts(data.posts);
+          if (data.posts.length < 9) {
+            setShowMore(false);
           }
-        } catch (error) {
-          console.log(error.message);
         }
-      };
-      fetchPosts();
-    }
-  }, [currentUser]);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    fetchPosts();
+  }
+}, [currentUser]);
 
   const isDark = theme === 'dark';
 
-  const handleShowMore = async ()=> {
-           const startIndex = userPosts.length;
-           try {
-              const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
-              const data = await res.json();
-              console.log(data)
-              if (res.ok) {
-                setUserPosts((prev)=> [...prev,...data.posts])
-                if (data.posts?.length < 9) {
-                    setShowMore(false);
-                }
-              }
-           } catch (error) {
-              console.log(error.message)
-           }
+  // const handleShowMore = async ()=> {
+  //          const startIndex = userPosts.length;
+  //          try {
+  //             const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+  //             const data = await res.json();
+  //             console.log(data)
+  //             if (res.ok) {
+  //               setUserPosts((prev)=> [...prev,...data.posts])
+  //               if (data.posts?.length < 9) {
+  //                   setShowMore(false);
+  //               }
+  //             }
+  //          } catch (error) {
+  //             console.log(error.message)
+  //          }
+  // }
+
+  const handleShowMore = async () => {
+  const startIndex = userPosts.length;
+  try {
+    const queryUserId = currentUser.isSuperAdmin ? '' : `userId=${currentUser._id}`;
+    const url = `/api/post/getposts?${queryUserId}&startIndex=${startIndex}`;
+    
+    const res = await fetch(url);
+    const data = await res.json();
+    if (res.ok) {
+      setUserPosts((prev) => [...prev, ...data.posts]);
+      if (data.posts?.length < 9) {
+        setShowMore(false);
+      }
+    }
+  } catch (error) {
+    console.log(error.message);
   }
+};
+
 
   const handleDeletePost = async ()=>{
              setShowModal(false);
@@ -89,52 +134,62 @@ const DashPosts = () => {
               </tr>
             </thead>
             <tbody>
-              {userPosts.map((post) => (
-                <tr
-                  key={post._id}
-                  className={`border-b transition-colors duration-200 ${
-                    isDark
-                      ? 'border-gray-700 hover:bg-gray-800'
-                      : 'border-gray-200 hover:bg-gray-100'
-                  }`}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(post.updatedAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={`/post/${post.slug}`}>
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-20 h-12 object-cover rounded-md bg-gray-300"
-                      />
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap font-medium">
-                    <Link
-                      to={`/post/${post.slug}`}
-                      className={isDark ? 'text-white' : 'text-gray-900'}
-                    >
-                      {post.title}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{post.category}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span onClick={() =>{
-                          setShowModal(true)
-                          setPostIdToDelete(post._id)
-                    }} className="text-red-600 hover:underline cursor-pointer">Delete</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link
-                      to={`/update-post/${post._id}`}
-                      className="text-teal-500 hover:underline"
-                    >
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+            {userPosts.map((post) => {
+  return (
+    <tr
+      key={post._id}
+      className={`border-b transition-colors duration-200 ${
+        isDark
+          ? 'border-gray-700 hover:bg-gray-800'
+          : 'border-gray-200 hover:bg-gray-100'
+      }`}
+    >
+      <td className="px-6 py-4 whitespace-nowrap">
+        {new Date(post.updatedAt).toLocaleDateString()}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <Link to={`/post/${post.slug}`}>
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-20 h-12 object-cover rounded-md bg-gray-300"
+          />
+        </Link>
+      </td>
+<td className="px-6 py-4 max-w-[250px] whitespace-nowrap overflow-hidden text-ellipsis font-medium">
+  <Link
+    to={`/post/${post.slug}`}
+    className={isDark ? 'text-white' : 'text-gray-900'}
+    title={post.title} // Tooltip on hover
+  >
+    {post.title}
+  </Link>
+</td>
+
+      <td className="px-6 py-4 whitespace-nowrap">{post.category || 'N/A'}</td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <span
+          onClick={() => {
+            setShowModal(true);
+            setPostIdToDelete(post._id);
+          }}
+          className="text-red-600 hover:underline cursor-pointer"
+        >
+          Delete
+        </span>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <Link
+          to={`/update-post/${post._id}`}
+          className="text-teal-500 hover:underline"
+        >
+          Edit
+        </Link>
+      </td>
+    </tr>
+  );
+})}
+
             </tbody>
           </table>
             {

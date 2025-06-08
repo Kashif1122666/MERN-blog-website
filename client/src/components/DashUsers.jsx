@@ -85,7 +85,7 @@ const DashUsers = () => {
                 <th className="px-6 py-3">Username</th>
                 <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Admin</th>
-                <th className="px-6 py-3">Delete</th>
+                {/* <th className="px-6 py-3">Delete</th> */}
               </tr>
             </thead>
             <tbody>
@@ -117,12 +117,12 @@ const DashUsers = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.isAdmin ? (<FaCheck className='text-green-500'/>) : (<FaTimes className='text-red-500' />)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  {/* <td className="px-6 py-4 whitespace-nowrap">
                     <span onClick={() =>{
                           setShowModal(true)
                           setUserIdToDelete(user._id)
                     }} className="text-red-600 hover:underline cursor-pointer">Delete</span>
-                  </td>
+                  </td> */}
                  
                 </tr>
               ))}
