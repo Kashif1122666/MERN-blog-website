@@ -91,9 +91,9 @@ const [avatarSrc, setAvatarSrc] = useState('');
       </form>
       <div className="hidden lg:flex items-center gap-4 ml-4">
   <Link
-    to="/home"
+    to="/"
     className={`block py-1 ${
-      path === '/home'
+      path === '/'
         ? 'text-blue-600 rounded px-2'
         : (` ${theme === 'dark' ?  'text-white' : ' text-gray-700'} `)
     }`}
@@ -173,10 +173,10 @@ const [avatarSrc, setAvatarSrc] = useState('');
     }
   `}>
     <Link
-      to="/home"
+      to="/"
       className={`
         block py-2 px-3 rounded-md mb-1 transition-colors
-        ${path === '/home'
+        ${path === '/'
           ? 'bg-blue-500 text-white'
           : theme === 'dark'
             ? 'text-gray-200 hover:bg-gray-700'
