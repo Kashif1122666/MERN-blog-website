@@ -113,7 +113,7 @@ const  handleSubmit = async (e)=>{
       <div className="hidden lg:flex items-center gap-4 ml-4">
   <Link
     to="/"
-    className={`block py-1 ${
+    className={`block py-1 text-2xl ${
       path === '/'
         ? 'text-blue-600 rounded px-2'
         : (` ${theme === 'dark' ?  'text-white' : ' text-gray-700'} `)
@@ -123,7 +123,7 @@ const  handleSubmit = async (e)=>{
   </Link>
   <Link
     to="/about"
-    className={`block py-1 ${
+    className={`block py-1 text-2xl ${
       path === '/about'
         ? 'text-blue-600 rounded px-2'
         :(` ${theme === 'dark' ?  'text-white' : ' text-gray-700'} `)
@@ -131,7 +131,7 @@ const  handleSubmit = async (e)=>{
   >
     About
   </Link>
-  <Link
+  {/* <Link
     to="/projects"
     className={`block py-1 ${
       path === '/projects'
@@ -140,7 +140,7 @@ const  handleSubmit = async (e)=>{
     }`}
   >
     Projects
-  </Link>
+  </Link> */}
 </div>
 
       <Button className='w-12 h-10 lg:hidden ' color='light' pill>
@@ -221,7 +221,7 @@ const  handleSubmit = async (e)=>{
     >
       About
     </Link>
-    <Link
+    {/* <Link
       to="/projects"
       className={`
         block py-2 px-3 rounded-md transition-colors
@@ -234,7 +234,7 @@ const  handleSubmit = async (e)=>{
       `}
     >
       Projects
-    </Link>
+    </Link> */}
   </div>
 )}
 
