@@ -152,7 +152,7 @@ const DashPosts = () => {
           <img
             src={post.image}
             alt={post.title}
-            className="w-20 h-12 object-cover rounded-md bg-gray-300"
+            className="w-20 h-12 object-cover rounded-md bg-gray-300 "
           />
         </Link>
       </td>

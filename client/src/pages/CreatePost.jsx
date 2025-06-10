@@ -130,7 +130,7 @@ const CreatePost = () => {
 
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
-          className={` ${theme === 'dark' ? 'text-white':'' }`}
+          className={` text-black ${theme === 'dark' ? 'text-black':'' }`}
   id="imageUpload"
   accept="image/*"
   onChange={(e) => {
