@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard.jsx';
 import { motion } from 'framer-motion';
+import homePic from '../images/homePic.png'; 
 
 function Home() {
   const { theme } = useSelector(state => state.theme);
@@ -26,15 +27,24 @@ function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-3xl font-bold lg:text-6xl">
+        <h1 className="text-3xl font-bold lg:text-6xl text-center">
           Welcome To Skills Exchange
         </h1>
-        <p className="text-gray-500 text-xs sm:text-sm">
+
+        {/* Responsive Image */}
+        <img
+          src={homePic} // Replace this with your actual image path
+          alt="Skills Exchange Banner"
+          className="w-full max-w-4xl mx-auto h-auto object-cover rounded-xl shadow-md"
+        />
+
+        <p className="text-gray-500 text-xs sm:text-sm text-center">
           Discover a community where skills meet opportunity. Our platform connects individuals eager to learn with those ready to teach — whether it's coding, design, photography, or language learning. Share your talents, exchange knowledge, and grow together in a supportive, collaborative environment. Empower yourself and others through skill-sharing today!
         </p>
+
         <Link
           to={'/search'}
-          className="text-xs sm:text-sm text-teal-500 font-bold hover:underline"
+          className="text-xs sm:text-sm text-teal-500 font-bold hover:underline text-center"
         >
           View all Posts
         </Link>
@@ -77,7 +87,6 @@ function Home() {
           </motion.div>
         )}
       </motion.div>
-      
     </div>
   );
 }
